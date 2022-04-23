@@ -31,8 +31,7 @@ class TrashcanReminder extends Homey.App
 		this.onUpdateData(true, false);
 		
 		// Every 24 hours update API or manual dates
-		let msTillUpdateApi = this.millisecondsTillSaturdayNight();
-		this.homey.setTimeout(this.onUpdateData.bind(this), msTillUpdateApi, true, true); // Every Saturday night (and on refresh), but this prevents data from getting lost when it is retrieved through the week.
+		this.homey.setTimeout(this.onUpdateData.bind(this), 86400000, true, true); // Update every 24 hours
 		this.homey.setInterval(this.onUpdateLabel.bind(this), 10*60*1000); // Update label every 10 minutes.
 		
 		// Make sure the label is updated every 10 minutes
@@ -171,11 +170,10 @@ class TrashcanReminder extends Homey.App
 			this.GenerateNewDaysBasedOnManualInput();
 		}
 		
-		// Make sure it is executed every saturday around midnight (+1 sec)	
+		// Make sure it is executed every 24 hours	
 		if(shouldSetTimeout === true)
 		{
-			let msTillSaturday = this.millisecondsTillSaturdayNight();	
-			this.homey.setTimeout(this.onUpdateData.bind(this), msTillSaturday, true, true);
+			this.homey.setTimeout(this.onUpdateData.bind(this), 86400000, true, true);
 		}
 	}
 	
@@ -345,36 +343,6 @@ class TrashcanReminder extends Homey.App
 	getLocalDate()
 	{
 		return new Date(new Date().toLocaleString('nl-NL', { timeZone: this.homey.clock.getTimezone() }));
-	}
-
-	// Exctualy calculates MS till 5 O clock
-	millisecondsTillMidnight()
-	{
-		var now = this.getLocalDate();
-		var currentHour = now.getHours();
-
-		var night = new Date(
-			now.getFullYear(),
-			now.getMonth(),
-			currentHour < 5 ? (now.getDate()) : (now.getDate() + 1),
-			5, 0, 1
-		);
-		
-		let msTillMidnight = night.getTime() - now.getTime();
-		console.log(msTillMidnight);
-		return msTillMidnight <= 0 ? 1000 : msTillMidnight;
-	}
-	
-	millisecondsTillSaturdayNight()
-	{
-		var now = this.getLocalDate();
-		var currentDay = now.getDay()%6 == 0 ? 6 : now.getDay()%6;
-		
-		var msTillMidnight = this.millisecondsTillMidnight();
-		var msTillSaturday = ((currentDay * 24 * 60 * 60 * 1000) + msTillMidnight);
-		console.log("ms till Saturday night");
-		console.log(msTillSaturday);
-		return msTillSaturday <= 0 ? 1000 : msTillSaturday;
 	}
 	
 	pad(n, width, z)

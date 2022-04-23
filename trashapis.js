@@ -746,31 +746,60 @@ function recycleManager(postcode, housenumber, street, country, callback) {
 function afvalkalenderRD4(postcode, housenumber, street, country, callback) {
     console.log("Checking afvalkalender RD4");
 
-    var url = "https://rd4.syzygy.eu/" + postcode + "/" + housenumber + "/";
+    var d = new Date();
+    var url = `https://data.rd4.nl/api/v1/waste-calendar?postal_code=${postcode.substring(0,4)}+${postcode.substring(4,6)}&house_number=${housenumber}&year=${d.getFullYear()}&types[]=residual_waste&types[]=gft&types[]=paper&types[]=pruning_waste&types[]=pmd&types[]=best_bag&types[]=christmas_trees`;
 
     request(url, function (err, res, body) {
         if (!err && res.statusCode == 200) {
           try {
             var result = JSON.parse(res.body);
-                    var transformedResult = {};
+            var fDates = {};
 
-                    for(var type in result) {
-                        transformedResult[type] = [];
-                        result[type].forEach(function(value) {
-                            var splitted = value.split('-');
+            for(var et in result.data.items[0])
+            {
+                var entry = result.data.items[0][et];
+                var dateStr = entry.date.substring(8,10) + "-" + entry.date.substring(5,7) + "-" + entry.date.substring(0,4);
 
-                            if(splitted[2].len == 4)
-                            {
-                                transformedResult[type].push(splitted[2] + '-' + splitted[1] + '-' + splitted[0]);
-                            }
-                            else
-                            {
-                                transformedResult[type].push(splitted[0] + '-' + splitted[1] + '-' + splitted[2]);
-                            }
-                        });
-                    }
+                switch(entry.type)
+                {
+                    case 'gft':
+                        if (!fDates.GFT) fDates.GFT = [];
+                        fDates.GFT.push(dateStr);
+                        break;
+                    case 'paper':
+                        if (!fDates.PAPIER) fDates.PAPIER = [];
+                        fDates.PAPIER.push(dateStr);
+                        break;
+                    case 'plastic':
+                        if (!fDates.PLASTIC) fDates.PLASTIC = [];
+                        fDates.PLASTIC.push(dateStr);
+                        break;
+                    case 'residual_waste':
+                        if (!fDates.REST) fDates.REST = [];
+                        fDates.REST.push(dateStr);
+                        break;
+                    case 'pmd':
+                        if (!fDates.PMD) fDates.PMD = [];
+                        fDates.PMD.push(dateStr);
+                        break;
+                    case 'best_bag':
+                        if (!fDates.TEXTIEL) fDates.TEXTIEL = [];
+                        fDates.TEXTIEL.push(dateStr);
+                        break;
+                    case 'pruning_waste':
+                        if (!fDates.GROF) fDates.GROF = [];
+                        fDates.GROF.push(dateStr);
+                        break;
+                    case 'christmas_trees':
+                        if (!fDates.KERSTBOOM) fDates.KERSTBOOM = [];
+                        fDates.KERSTBOOM.push(dateStr);
+                        break;
+                    default:
+                        console.log('Defaulted. Element not found:', entry.type);
+                }
+            }
 
-            return callback(null, transformedResult);
+            return callback(null, fDates);
           } catch (ex) {
             return callback(new Error('Error: ' + ex));
           }
