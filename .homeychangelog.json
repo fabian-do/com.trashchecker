@@ -77,5 +77,9 @@
   "3.1.5": {
     "en": "Fixed implementation of Circulus-Berkel (GitHub: #138)",
     "nl": "Circulus-Berkel API werkt weer (GitHub: #138)"
+  },
+  "3.1.12": {
+    "en": "Trying to fix memory leaks that started in 7.4.0-RC22",
+    "nl": "Proberen memory leaks op te lossen die zijn ontstaan in 7.4.0-RC22"
   }
 }
