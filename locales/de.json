@@ -1,7 +1,7 @@
 {
-	"title": "Trash Checker",
+	"title": "Abfallkalender",
 	"settings": {
-		"title": "Trashcan Reminder Settings",
+		"title": "Abfallkalender Einstellungen",
 		"description":"Please note that not all cities are supported. You can check availability by providing your postal code and house number to see if it's supported. If the address isn't supported, you can always add the pattern via the manual input settings below and still be able to use the full functionalities of the app!",
 		"postcode": "Postal Code",
 		"hnumber": "House Number",
@@ -13,11 +13,11 @@
 		"manualonly": "The data was refreshed based on the manual settings only",
 		"update": "Address updated to ",
 		"checking": "checking address...",
-		"gft": "Organic",
-		"rest": "Residual",
-		"plastic": "Plastic",
+		"gft": "Biomüll",
+		"rest": "Restmüll",
+		"plastic": "Gelbe Tonne",
 		"pmd": "PMD",
-		"paper": "Paper",
+		"paper": "Papier",
 		"textile": "Textile",
 		"bulky": "Bulky Waste",
 		"glas": "Glass",
@@ -31,34 +31,34 @@
 		{
 			"na": "N/A",
 			"automatic": "Based on API",
-			"everyweek": "Every week on",
-			"everyotherweek": "Every other week on",
-			"everythreeweeks": "Once every three weeks on",
-			"everyfourweeks": "Once every four weeks on",
-			"everysixweeks": "Once every six weeks on",
-			"everyeighthweeks": "Once every eight weeks on",
-			"everyfirst": "Every first",
-			"everysecond": "Every second",
-			"everythird": "Every third",
-			"everyfourth": "Every fourth",
+			"everyweek": "jede Woche",
+			"everyotherweek": "alle 2 Wochen",
+			"everythreeweeks": "alle 3 Wochen",
+			"everyfourweeks": "alle 4 Wochen",
+			"everysixweeks": "alle 6 Wochen",
+			"everyeighthweeks": alle 8 Wochen",
+			"everyfirst": "jeden ersten",
+			"everysecond": "jeden zweiten",
+			"everythird": "jeden dritten",
+			"everyfourth": "jeden vierten",
 			"everysecondlast": "Every second last",
-			"everylast": "Every last"
+			"everylast": "jeden letzten"
 		},
 		"dayofweek": {
-			"mo": "Monday",
-			"tu": "Tuesday",
-			"we": "Wednesday",
-			"th": "Thursday",
-			"fr": "Friday",
-			"sa": "Saturday",
-			"su": "Sunday"
+			"mo": "Montag",
+			"tu": "Dienstag",
+			"we": "Mittwoch",
+			"th": "Donnerstag",
+			"fr": "Freitag",
+			"sa": "Samstag",
+			"su": "Sonntag"
 		},
 		"interval_extra":
 		{
-			"month": "of the month",
-			"othermonth": "every other month",
-			"quarter": "of the quarter",
-			"year": "of the year"
+			"month": "des Monats",
+			"othermonth": "jeden zweiten Monat",
+			"quarter": "einmal im Quartal",
+			"year": "im Jahr"
 		},
 		"manualdata":
 		{
