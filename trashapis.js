@@ -169,6 +169,12 @@ function afvalkalenderSudwestFryslan(postcode, housenumber, street, country) {
     return newGeneralAfvalkalendersNederland(postcode, housenumber, country, "afvalkalender.sudwestfryslan.nl");
 }
 
+function DE_EDGDortmundGmbH(postcode, housenumber, street, country)
+{
+    console.log("Checking EDG Entsorgung Dortmund GmbH");
+    return generalImplementationWasteApi(postcode, housenumber, country, "f8e2844a-095e-48f9-9f98-71fceb51d2c3", "wasteapi.ximmio.com");
+}
+
 /**
  * General implementation of the afvalkalender API used by a lot of different vendors.
  */
@@ -1582,5 +1588,9 @@ apiList.push({ name: "Recycle App (BE)", id: "recbe", execute: recycleApp });
 
 apiList.push({ name: "Afvalkalender Cure", id: "acu", execute: afvalkalenderCure })                             // Deprecated as of 2022-06-09
 apiList.push({ name: "Stadswerk072", id: "sw072", execute: afvalwijzerStadswerk072 });                          // Deprecated as of 2022-06-09
+
+// German Abfallkalender
+apiList.push({ name: "DE: EDG Entsorgung Dortmund GmbH", id: "de_do_edg", execute: DE_EDGDortmundGmbH });                          // Deprecated as of 2022-06-09
+
 
 module.exports = apiList;
