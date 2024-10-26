@@ -172,107 +172,83 @@ function afvalkalenderSudwestFryslan(postcode, housenumber, street, country) {
 function DE_EDGDortmundGmbH(postcode, housenumber, street, country)
 {
     console.log("Checking EDG Entsorgung Dortmund GmbH");
-    return generalAbfallkalenderICSGerman(postcode, housenumber, country, "f8e2844a-095e-48f9-9f98-71fceb51d2c3", "kundenportal.edg.de");
+    return EDGAbfallkalenderICSGerman(street, housenumber, country, "kundenportal.edg.de");
 }
 
 /**
  * General implementation of the German ICS-Import
  */
-function new generalAbfallkalenderICSGermany(postcode, housenumber, country, baseUrl) {
+
+function new EDGAbfallkalenderICSGermany(street, housenumber, country, baseUrl) {
     console.log("Checking new general ICS-Abfallkalender with URL: " + baseUrl);
 
     if (country !== "DE") {
         console.log('unsupported country');
         return Promise.reject(Error('Unsupported country'));
     }
-
-    var retrieveIdentificationRequest = httpsPromise({
-        hostname: baseUrl,
-        path: `/adressen/${postcode}:${housenumber}`,
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    });
     
     return new Promise(function(resolve, reject)
     {
-        retrieveIdentificationRequest.then(function(response)
-        {
-            var result = response.body;
-            if(result.length <= 0)
-            {
-                return reject(new Error("Invalid zipcode for " + baseUrl));
-            }
-
-            var identificatie = result[0].bagid;
-
-            var retrieveCalendar  = httpsPromise({
-                hostname: baseUrl,
-                path: `/ical/${identificatie}`,
-                method: 'GET'
-            });
-
-            retrieveCalendar.then(function(response)
-            {
-                console.log(`response: ${response.body}`);
-
-                var icalResult = response.body;
-                const dates = {};
-                const entries = ical.parseICS(icalResult);
-                for (let i in entries) {
-                    const entry = entries[i];
-                    const dateStr = entry.start.getFullYear() + '-' + (('0' + (entry.start.getMonth() + 1)).slice(-2)) + "-" + ('0' + entry.start.getDate()).slice(-2);
-
-                    var description = entry.description.toLowerCase().trim();
-
-                    if (description.indexOf('groente') !== -1 || description.indexOf('gft') !== -1 || description.indexOf('bio') !== -1) {
-                        if (!dates.GFT) dates.GFT = [];
-                        dates.GFT.push(dateStr);
-                    } else if (description.indexOf('rest') !== -1) {
-                        if (!dates.REST) dates.REST = [];
-                        dates.REST.push(dateStr);
-                    } else if (description.indexOf('pmd') !== -1 || description.indexOf('pd') !== -1 || description.indexOf('metaal') !== -1 || description.indexOf('drankkartons') !== -1) {
-                        if (!dates.PMD) dates.PMD = [];
-                        dates.PMD.push(dateStr);
-                    } else if (description.indexOf('plastic') !== -1) {
-                        if (!dates.PLASTIC) dates.PLASTIC = [];
-                        dates.PLASTIC.push(dateStr);
-                    }  else if (description.indexOf('papier') !== -1) {
-                        if (!dates.PAPIER) dates.PAPIER = [];
-                        dates.PAPIER.push(dateStr);
-                    } else if (description.indexOf('textiel') !== -1 || description.indexOf('retour') !== -1) {
-                        if (!dates.TEXTIEL) dates.TEXTIEL = [];
-                        dates.TEXTIEL.push(dateStr);
-                    } else if(description.indexOf('kerstbomen') !== -1 || description.indexOf('kerst') !== -1) {
-                        if (!dates.KERSTBOOM) dates.KERSTBOOM = [];
-                        dates.KERSTBOOM.push(dateStr);
-                    } else if(description.indexOf('grof') !== -1 || description.indexOf('vuil') !== -1) {
-                        if (!dates.GROF) dates.GROF = [];
-                        dates.GROF.push(dateStr);
-                    } else if(description.indexOf('glas') !== -1) {
-                        if (!dates.GLAS) dates.GLAS = [];
-                        dates.GLAS.push(dateStr);
-                    } else {
-                        console.log("Unknown description: " + description);
-                    }
-                }
-
-                console.log(dates);
-                resolve(dates);
-            })
-            .catch(function(error)
-            {
-                console.log("retrieve calender rejected");
-                console.log(error);
-                reject(error);
-            });
-        }).catch(function(error)
-        {
-            console.log("retrieve identification rejected");
-            console.log(error);
-            reject(error);
-        });
+	    var retrieveCalendar  = httpsPromise({
+		hostname: baseUrl,
+		path: `/WasteManagementDortmund/WasteManagementServiceServlet?ApplicationName=Calendar&SubmitAction=sync&Fra=P;R;B;&WStandortID=${street}`,
+		method: 'GET'
+	    });
+	
+	    retrieveCalendar.then(function(response)
+	    {
+		console.log(`response: ${response.body}`);
+	
+		var icalResult = response.body;
+		const dates = {};
+		const entries = ical.parseICS(icalResult);
+		for (let i in entries) {
+		    const entry = entries[i];
+		    const dateStr = entry.start.getFullYear() + '-' + (('0' + (entry.start.getMonth() + 1)).slice(-2)) + "-" + ('0' + entry.start.getDate()).slice(-2);
+	
+		    var description = entry.description.toLowerCase().trim();
+	
+		    if (description.indexOf('Bioabfall') !== -1 || description.indexOf('gft') !== -1 || description.indexOf('bio') !== -1) {
+			if (!dates.GFT) dates.GFT = [];
+			dates.GFT.push(dateStr);
+		    } else if (description.indexOf('Restabfall') !== -1) {
+			if (!dates.REST) dates.REST = [];
+			dates.REST.push(dateStr);
+		    } else if (description.indexOf('pmd') !== -1 || description.indexOf('pd') !== -1 || description.indexOf('metaal') !== -1 || description.indexOf('drankkartons') !== -1) {
+			if (!dates.PMD) dates.PMD = [];
+			dates.PMD.push(dateStr);
+		    } else if (description.indexOf('Wertstoffe') !== -1) {
+			if (!dates.PLASTIC) dates.PLASTIC = [];
+			dates.PLASTIC.push(dateStr);
+		    }  else if (description.indexOf('Altpapier') !== -1) {
+			if (!dates.PAPIER) dates.PAPIER = [];
+			dates.PAPIER.push(dateStr);
+		    } else if (description.indexOf('textiel') !== -1 || description.indexOf('retour') !== -1) {
+			if (!dates.TEXTIEL) dates.TEXTIEL = [];
+			dates.TEXTIEL.push(dateStr);
+		    } else if(description.indexOf('kerstbomen') !== -1 || description.indexOf('kerst') !== -1) {
+			if (!dates.KERSTBOOM) dates.KERSTBOOM = [];
+			dates.KERSTBOOM.push(dateStr);
+		    } else if(description.indexOf('grof') !== -1 || description.indexOf('vuil') !== -1) {
+			if (!dates.GROF) dates.GROF = [];
+			dates.GROF.push(dateStr);
+		    } else if(description.indexOf('glas') !== -1) {
+			if (!dates.GLAS) dates.GLAS = [];
+			dates.GLAS.push(dateStr);
+		    } else {
+			console.log("Unknown description: " + description);
+		    }
+		}
+	
+		console.log(dates);
+		resolve(dates);
+	    })
+	    .catch(function(error)
+	    {
+		console.log("retrieve calender rejected");
+		console.log(error);
+		reject(error);
+	    });
     });
 }
 
@@ -1691,7 +1667,7 @@ apiList.push({ name: "Afvalkalender Cure", id: "acu", execute: afvalkalenderCure
 apiList.push({ name: "Stadswerk072", id: "sw072", execute: afvalwijzerStadswerk072 });                          // Deprecated as of 2022-06-09
 
 // German Abfallkalender
-apiList.push({ name: "DE: EDG Entsorgung Dortmund GmbH", id: "de_do_edg", execute: DE_EDGDortmundGmbH });                          // Deprecated as of 2022-06-09
+apiList.push({ name: "DE: EDG Entsorgung Dortmund GmbH (In das Feld Straße muss die StandortID des ICS-Links eingefügt werden!)", id: "de_do_edg", execute: DE_EDGDortmundGmbH });                          // Deprecated as of 2022-06-09
 
 
 module.exports = apiList;
